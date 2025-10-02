@@ -1,0 +1,78 @@
+
+{
+  "name": "food_items",
+  "options": {
+    "validator": {
+      "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["name", "category", "price", "description", "available", "createdAt"],
+        "properties": {
+          "name": {
+            "bsonType": "string",
+            "description": "Nome do item"
+          },
+          "category": {
+            "bsonType": "string",
+            "enum": ["sushi", "hamburger", "acompanhamentos", "bebidas"],
+            "description": "Categoria do item"
+          },
+          "price": {
+            "bsonType": "number",
+            "minimum": 0,
+            "description": "Preço em reais"
+          },
+          "description": {
+            "bsonType": "string",
+            "description": "Descrição do item"
+          },
+          "image": {
+            "bsonType": "string",
+            "description": "URL da imagem"
+          },
+          "available": {
+            "bsonType": "bool",
+            "description": "Disponibilidade"
+          },
+          "sizes": {
+            "bsonType": "array",
+            "description": "Opções de tamanho"
+          },
+          "extras": {
+            "bsonType": "array",
+            "description": "Adicionais disponíveis"
+          },
+          "isCombo": {
+            "bsonType": "bool",
+            "description": "Se é um combo promocional"
+          },
+          "originalPrice": {
+            "bsonType": "number",
+            "description": "Preço original (para combos em promoção)"
+          },
+          "prepTime": {
+            "bsonType": "int",
+            "minimum": 5,
+            "description": "Tempo de preparo em minutos"
+          },
+          "creator": {
+            "bsonType": "string",
+            "description": "Criador do item"
+          },
+          "createdAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data de criação ISO 8601"
+          },
+          "updatedAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data de atualização ISO 8601"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "validationLevel": "moderate",
+    "validationAction": "warn"
+  }
+}

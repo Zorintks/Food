@@ -1,0 +1,65 @@
+
+{
+  "name": "cart_items",
+  "options": {
+    "validator": {
+      "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["cpfHash", "itemId", "quantity", "price", "createdAt"],
+        "properties": {
+          "cpfHash": {
+            "bsonType": "string",
+            "description": "Hash do CPF para sincronização"
+          },
+          "itemId": {
+            "bsonType": "string",
+            "description": "ID do item do cardápio"
+          },
+          "itemName": {
+            "bsonType": "string",
+            "description": "Nome do item"
+          },
+          "quantity": {
+            "bsonType": "int",
+            "minimum": 1,
+            "description": "Quantidade"
+          },
+          "price": {
+            "bsonType": "number",
+            "minimum": 0,
+            "description": "Preço unitário"
+          },
+          "selectedSize": {
+            "bsonType": "string",
+            "description": "Tamanho selecionado"
+          },
+          "selectedExtras": {
+            "bsonType": "array",
+            "description": "Adicionais selecionados"
+          },
+          "observations": {
+            "bsonType": "string",
+            "description": "Observações do cliente"
+          },
+          "creator": {
+            "bsonType": "string",
+            "description": "Criador do item"
+          },
+          "createdAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data de criação ISO 8601"
+          },
+          "updatedAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data de atualização ISO 8601"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "validationLevel": "moderate",
+    "validationAction": "warn"
+  }
+}

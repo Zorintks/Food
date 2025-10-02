@@ -1,0 +1,90 @@
+
+{
+  "name": "orders",
+  "options": {
+    "validator": {
+      "$jsonSchema": {
+        "bsonType": "object",
+        "required": ["orderNumber", "cpfHash", "items", "subtotal", "shippingFee", "total", "status", "createdAt"],
+        "properties": {
+          "orderNumber": {
+            "bsonType": "string",
+            "description": "Número único do pedido"
+          },
+          "cpfHash": {
+            "bsonType": "string",
+            "description": "Hash do CPF para privacidade"
+          },
+          "items": {
+            "bsonType": "array",
+            "description": "Itens do pedido"
+          },
+          "subtotal": {
+            "bsonType": "number",
+            "minimum": 0,
+            "description": "Subtotal em reais"
+          },
+          "shippingFee": {
+            "bsonType": "number",
+            "minimum": 0,
+            "description": "Taxa de entrega"
+          },
+          "total": {
+            "bsonType": "number",
+            "minimum": 0,
+            "description": "Total em reais"
+          },
+          "address": {
+            "bsonType": "object",
+            "description": "Endereço de entrega"
+          },
+          "status": {
+            "bsonType": "string",
+            "enum": ["pendente", "pagamento_confirmado", "em_preparo", "saiu_entrega", "entregue", "cancelado"],
+            "description": "Status do pedido"
+          },
+          "paymentMethod": {
+            "bsonType": "string",
+            "enum": ["pix"],
+            "description": "Método de pagamento"
+          },
+          "pixQrCode": {
+            "bsonType": "string",
+            "description": "QR Code PIX gerado"
+          },
+          "pixPayload": {
+            "bsonType": "string",
+            "description": "Payload PIX para pagamento"
+          },
+          "estimatedDelivery": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Tempo estimado de entrega"
+          },
+          "deliveredAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data/hora da entrega"
+          },
+          "creator": {
+            "bsonType": "string",
+            "description": "Criador do pedido"
+          },
+          "createdAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data de criação ISO 8601"
+          },
+          "updatedAt": {
+            "bsonType": "string",
+            "title": "datetime",
+            "description": "Data de atualização ISO 8601"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "validationLevel": "moderate",
+    "validationAction": "warn"
+  }
+}

@@ -1,90 +1,104 @@
 
 {
-  "name": "orders",
-  "options": {
-    "validator": {
-      "$jsonSchema": {
-        "bsonType": "object",
-        "required": ["orderNumber", "cpfHash", "items", "subtotal", "shippingFee", "total", "status", "createdAt"],
+  "title": "Orders",
+  "type": "object",
+  "properties": {
+    "orderNumber": {
+      "type": "string",
+      "title": "Número do Pedido",
+      "description": "Número único identificador do pedido"
+    },
+    "items": {
+      "type": "array",
+      "title": "Itens do Pedido",
+      "items": {
+        "type": "object",
         "properties": {
-          "orderNumber": {
-            "bsonType": "string",
-            "description": "Número único do pedido"
+          "itemId": { "type": "string" },
+          "itemName": { "type": "string" },
+          "quantity": { "type": "number" },
+          "price": { "type": "number" },
+          "selectedSize": { "type": "string" },
+          "selectedExtras": { 
+            "type": "array",
+            "items": { "type": "string" }
           },
-          "cpfHash": {
-            "bsonType": "string",
-            "description": "Hash do CPF para privacidade"
-          },
-          "items": {
-            "bsonType": "array",
-            "description": "Itens do pedido"
-          },
-          "subtotal": {
-            "bsonType": "number",
-            "minimum": 0,
-            "description": "Subtotal em reais"
-          },
-          "shippingFee": {
-            "bsonType": "number",
-            "minimum": 0,
-            "description": "Taxa de entrega"
-          },
-          "total": {
-            "bsonType": "number",
-            "minimum": 0,
-            "description": "Total em reais"
-          },
-          "address": {
-            "bsonType": "object",
-            "description": "Endereço de entrega"
-          },
-          "status": {
-            "bsonType": "string",
-            "enum": ["pendente", "pagamento_confirmado", "em_preparo", "saiu_entrega", "entregue", "cancelado"],
-            "description": "Status do pedido"
-          },
-          "paymentMethod": {
-            "bsonType": "string",
-            "enum": ["pix"],
-            "description": "Método de pagamento"
-          },
-          "pixQrCode": {
-            "bsonType": "string",
-            "description": "QR Code PIX gerado"
-          },
-          "pixPayload": {
-            "bsonType": "string",
-            "description": "Payload PIX para pagamento"
-          },
-          "estimatedDelivery": {
-            "bsonType": "string",
-            "title": "datetime",
-            "description": "Tempo estimado de entrega"
-          },
-          "deliveredAt": {
-            "bsonType": "string",
-            "title": "datetime",
-            "description": "Data/hora da entrega"
-          },
-          "creator": {
-            "bsonType": "string",
-            "description": "Criador do pedido"
-          },
-          "createdAt": {
-            "bsonType": "string",
-            "title": "datetime",
-            "description": "Data de criação ISO 8601"
-          },
-          "updatedAt": {
-            "bsonType": "string",
-            "title": "datetime",
-            "description": "Data de atualização ISO 8601"
-          }
-        },
-        "additionalProperties": true
+          "observations": { "type": "string" }
+        }
       }
     },
-    "validationLevel": "moderate",
-    "validationAction": "warn"
-  }
+    "subtotal": {
+      "type": "number",
+      "title": "Subtotal",
+      "description": "Valor dos itens sem frete"
+    },
+    "shippingFee": {
+      "type": "number",
+      "title": "Taxa de Entrega",
+      "description": "Valor da taxa de entrega"
+    },
+    "total": {
+      "type": "number",
+      "title": "Total",
+      "description": "Valor total do pedido"
+    },
+    "address": {
+      "type": "object",
+      "title": "Endereço de Entrega",
+      "properties": {
+        "name": { "type": "string", "title": "Nome" },
+        "phone": { "type": "string", "title": "Telefone" },
+        "street": { "type": "string", "title": "Rua" },
+        "number": { "type": "string", "title": "Número" },
+        "complement": { "type": "string", "title": "Complemento" },
+        "neighborhood": { "type": "string", "title": "Bairro" },
+        "city": { "type": "string", "title": "Cidade" },
+        "state": { "type": "string", "title": "Estado" },
+        "zipCode": { "type": "string", "title": "CEP" }
+      }
+    },
+    "status": {
+      "type": "string",
+      "title": "Status",
+      "enum": ["pendente", "em_preparo", "saiu_para_entrega", "entregue", "cancelado"],
+      "description": "Status atual do pedido"
+    },
+    "paymentMethod": {
+      "type": "string",
+      "title": "Método de Pagamento",
+      "enum": ["pix", "cartao", "dinheiro"],
+      "description": "Método utilizado para pagamento"
+    },
+    "pixQrCode": {
+      "type": "string",
+      "title": "QR Code PIX",
+      "description": "URL da imagem do QR Code PIX"
+    },
+    "pixPayload": {
+      "type": "string",
+      "title": "Payload PIX",
+      "description": "Código PIX para cópia"
+    },
+    "estimatedDelivery": {
+      "type": "string",
+      "title": "datetime",
+      "description": "Data e hora estimada de entrega"
+    },
+    "createdAt": {
+      "type": "string",
+      "title": "datetime",
+      "description": "Data e hora de criação do pedido"
+    },
+    "updatedAt": {
+      "type": "string",
+      "title": "datetime",
+      "description": "Data e hora da última atualização"
+    },
+    "creator": {
+      "type": "string",
+      "title": "Criador",
+      "description": "Quem criou o registro"
+    }
+  },
+  "required": ["orderNumber", "items", "total", "address", "status", "paymentMethod"]
 }

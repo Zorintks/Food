@@ -2,275 +2,257 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {Minus, Plus, Trash2, ShoppingBag, Truck, ArrowRight} from 'lucide-react'
+import {Trash2, Plus, Minus, ShoppingBag, ArrowRight} from 'lucide-react'
 import { useCart } from '../hooks/useCart'
-import CPFModal from '../components/CPFModal'
+import toast from 'react-hot-toast'
 
 const Cart: React.FC = () => {
-  const { items, loading, updateQuantity, removeItem, subtotal, itemCount, syncCart } = useCart()
-  const [showCPFModal, setShowCPFModal] = useState(false)
-  const [currentCPF, setCurrentCPF] = useState<string | null>(null)
+  const { items, updateQuantity, removeItem, subtotal, itemCount } = useCart()
+  const [isMobile, setIsMobile] = useState(false)
 
   const SHIPPING_FEE = 8.90
   const FREE_SHIPPING_THRESHOLD = 50.00
-
   const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE
   const total = subtotal + shippingFee
 
+  // Detectar dispositivo móvel
   useEffect(() => {
-    // Se não há CPF definido e há tentativa de acessar carrinho, solicitar CPF
-    if (!currentCPF && !loading) {
-      setShowCPFModal(true)
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768)
     }
-  }, [currentCPF, loading])
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
-  const handleCPFConfirm = async (cpf: string) => {
-    setCurrentCPF(cpf)
-    setShowCPFModal(false)
-    await syncCart(cpf)
+  // Configurações de animação baseadas no dispositivo
+  const animationConfig = isMobile ? {} : {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.3 }
   }
 
-  const handleQuantityChange = async (itemId: string, newQuantity: number) => {
-    await updateQuantity(itemId, newQuantity)
+  const itemAnimation = isMobile ? {} : {
+    initial: { opacity: 0, x: -20 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 20 },
+    transition: { duration: 0.2 }
   }
 
-  const handleRemoveItem = async (itemId: string) => {
-    await removeItem(itemId)
-  }
-
-  if (loading) {
+  if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-      </div>
-    )
-  }
-
-  if (!currentCPF) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <CPFModal
-          isOpen={showCPFModal}
-          onClose={() => setShowCPFModal(false)}
-          onConfirm={handleCPFConfirm}
-          title="Acesse seu Carrinho"
-          description="Digite seu CPF para visualizar seus itens"
-        />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center px-4">
+        <motion.div 
+          {...animationConfig}
+          className="text-center max-w-md mx-auto"
+        >
+          <div className="w-32 h-32 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-8">
+            <ShoppingBag size={64} className="text-white" />
+          </div>
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
+            Seu carrinho está vazio
+          </h1>
+          <p className="text-gray-600 mb-8 text-lg">
+            Que tal dar uma olhada no nosso delicioso cardápio?
+          </p>
+          <Link
+            to="/cardapio"
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-lg transition-all"
+          >
+            <span>Ver Cardápio</span>
+            <ArrowRight size={20} />
+          </Link>
+        </motion.div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
+      <div className="container mx-auto px-4 py-6 lg:py-8 max-w-6xl">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+        <motion.div 
+          {...animationConfig}
+          className="text-center mb-8 lg:mb-12"
         >
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Seu <span className="text-orange-500">Carrinho</span>
+          <h1 className="text-3xl lg:text-5xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-4">
+            Seu Carrinho
           </h1>
-          <p className="text-gray-600">
-            {itemCount > 0 ? `${itemCount} ${itemCount === 1 ? 'item' : 'itens'} no carrinho` : 'Carrinho vazio'}
+          <p className="text-gray-600 text-lg">
+            {itemCount} {itemCount === 1 ? 'item' : 'itens'} selecionado{itemCount !== 1 ? 's' : ''}
           </p>
         </motion.div>
 
-        {items.length === 0 ? (
-          /* Carrinho Vazio */
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl shadow-lg p-12 text-center"
-          >
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingBag size={32} className="text-gray-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">
-              Seu carrinho está vazio
-            </h2>
-            <p className="text-gray-600 mb-8">
-              Que tal explorar nosso delicioso cardápio?
-            </p>
-            <Link to="/cardapio">
-              <motion.button
-                className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Ver Cardápio
-              </motion.button>
-            </Link>
-          </motion.div>
-        ) : (
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Lista de Itens */}
-            <div className="lg:col-span-2 space-y-4">
-              <AnimatePresence>
-                {items.map((item) => (
-                  <motion.div
-                    key={item._id}
-                    layout
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    className="bg-white rounded-2xl shadow-lg p-6"
-                  >
-                    <div className="flex items-center space-x-4">
-                      {/* Imagem */}
-                      <img
-                        src={item.image || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'}
-                        alt={item.itemName}
-                        className="w-20 h-20 object-cover rounded-xl"
-                      />
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Lista de Itens */}
+          <div className="lg:col-span-2">
+            <motion.div 
+              {...animationConfig}
+              className="bg-white rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-6 lg:p-8"
+            >
+              <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-6">
+                Itens do Pedido
+              </h2>
+              
+              <AnimatePresence mode="popLayout">
+                <div className="space-y-4 lg:space-y-6">
+                  {items.map((item) => (
+                    <motion.div
+                      key={item.id}
+                      {...itemAnimation}
+                      layout
+                      className="flex flex-col lg:flex-row lg:items-center space-y-4 lg:space-y-0 lg:space-x-6 p-4 lg:p-6 border border-gray-200 rounded-xl lg:rounded-2xl hover:shadow-md transition-all bg-gray-50/50"
+                    >
+                      {/* Imagem do Item */}
+                      <div className="w-full lg:w-24 h-32 lg:h-24 bg-gradient-to-br from-orange-200 to-red-200 rounded-xl flex items-center justify-center">
+                        {item.image ? (
+                          <img 
+                            src={item.image} 
+                            alt={item.itemName}
+                            className="w-full h-full object-cover rounded-xl"
+                          />
+                        ) : (
+                          <span className="text-orange-600 font-bold text-2xl">
+                            {item.itemName.charAt(0)}
+                          </span>
+                        )}
+                      </div>
 
-                      {/* Detalhes */}
+                      {/* Informações do Item */}
                       <div className="flex-1">
-                        <h3 className="font-bold text-gray-800 text-lg mb-1">
+                        <h3 className="font-bold text-gray-800 text-lg mb-2">
                           {item.itemName}
                         </h3>
                         
                         {item.selectedSize && (
-                          <p className="text-sm text-gray-600 mb-1">
-                            Tamanho: {item.selectedSize}
+                          <p className="text-gray-600 text-sm mb-1">
+                            <span className="font-semibold">Tamanho:</span> {item.selectedSize}
                           </p>
                         )}
                         
                         {item.selectedExtras && item.selectedExtras.length > 0 && (
-                          <p className="text-sm text-gray-600 mb-1">
-                            Adicionais: {item.selectedExtras.join(', ')}
+                          <p className="text-gray-600 text-sm mb-1">
+                            <span className="font-semibold">Extras:</span> {item.selectedExtras.join(', ')}
                           </p>
                         )}
                         
                         {item.observations && (
-                          <p className="text-sm text-gray-600 mb-2">
-                            Obs: {item.observations}
+                          <p className="text-gray-600 text-sm mb-2">
+                            <span className="font-semibold">Obs:</span> {item.observations}
                           </p>
                         )}
 
                         <div className="flex items-center justify-between">
-                          <span className="text-xl font-bold text-orange-500">
+                          <span className="text-xl font-bold text-orange-600">
                             R$ {(item.price * item.quantity).toFixed(2)}
                           </span>
                           
+                          {/* Controles de Quantidade */}
                           <div className="flex items-center space-x-3">
-                            {/* Controles de Quantidade */}
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center space-x-1 bg-white border border-gray-300 rounded-xl p-1">
                               <button
-                                onClick={() => handleQuantityChange(item._id!, item.quantity - 1)}
-                                className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
                               >
                                 <Minus size={16} />
                               </button>
-                              <span className="text-lg font-semibold w-8 text-center">
+                              <span className="w-8 text-center font-semibold">
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => handleQuantityChange(item._id!, item.quantity + 1)}
-                                className="p-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
+                                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                                className="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
                               >
                                 <Plus size={16} />
                               </button>
                             </div>
-
-                            {/* Botão Remover */}
+                            
                             <button
-                              onClick={() => handleRemoveItem(item._id!)}
+                              onClick={() => removeItem(item.id)}
                               className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={18} />
                             </button>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    </motion.div>
+                  ))}
+                </div>
               </AnimatePresence>
-            </div>
-
-            {/* Resumo do Pedido */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-2xl shadow-lg p-6 h-fit sticky top-8"
-            >
-              <h2 className="text-xl font-bold text-gray-800 mb-6">
-                Resumo do Pedido
-              </h2>
-
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal ({itemCount} itens)</span>
-                  <span className="font-semibold">R$ {subtotal.toFixed(2)}</span>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center space-x-2">
-                    <Truck size={16} className="text-gray-600" />
-                    <span className="text-gray-600">Entrega</span>
-                  </div>
-                  <div className="text-right">
-                    {shippingFee === 0 ? (
-                      <div>
-                        <span className="font-semibold text-green-600">GRÁTIS</span>
-                        <p className="text-xs text-gray-500">Frete grátis SP</p>
-                      </div>
-                    ) : (
-                      <div>
-                        <span className="font-semibold">R$ {shippingFee.toFixed(2)}</span>
-                        <p className="text-xs text-gray-500">
-                          Faltam R$ {(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)} para frete grátis
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <div className="flex justify-between text-lg font-bold">
-                    <span>Total</span>
-                    <span className="text-orange-500">R$ {total.toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Barra de Progresso Frete Grátis */}
-              {subtotal < FREE_SHIPPING_THRESHOLD && (
-                <div className="mb-6">
-                  <div className="flex justify-between text-sm text-gray-600 mb-2">
-                    <span>Progresso frete grátis</span>
-                    <span>{Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100)}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div
-                      className="bg-gradient-to-r from-orange-500 to-red-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100)}%` }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <Link to="/checkout" state={{ cpf: currentCPF }}>
-                <motion.button
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all flex items-center justify-center space-x-2"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <span>Finalizar Pedido</span>
-                  <ArrowRight size={20} />
-                </motion.button>
-              </Link>
-
-              <Link to="/cardapio">
-                <button className="w-full mt-4 bg-gray-100 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors">
-                  Adicionar Mais Itens
-                </button>
-              </Link>
             </motion.div>
           </div>
-        )}
+
+          {/* Resumo do Pedido */}
+          <motion.div 
+            {...animationConfig}
+            className="bg-white rounded-2xl lg:rounded-3xl shadow-xl border border-gray-100 p-6 lg:p-8 h-fit sticky top-4"
+          >
+            <h3 className="text-xl lg:text-2xl font-bold text-gray-800 mb-6">
+              Resumo do Pedido
+            </h3>
+
+            <div className="space-y-4 mb-6">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Subtotal ({itemCount} {itemCount === 1 ? 'item' : 'itens'})</span>
+                <span className="font-semibold">R$ {subtotal.toFixed(2)}</span>
+              </div>
+              
+              <div className="flex justify-between">
+                <span className="text-gray-600">Taxa de entrega</span>
+                <span className={shippingFee === 0 ? 'text-green-600 font-bold' : 'font-semibold'}>
+                  {shippingFee === 0 ? 'GRÁTIS' : `R$ ${shippingFee.toFixed(2)}`}
+                </span>
+              </div>
+
+              {subtotal < FREE_SHIPPING_THRESHOLD && (
+                <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                  <p className="text-orange-700 text-sm font-semibold">
+                    Faltam R$ {(FREE_SHIPPING_THRESHOLD - subtotal).toFixed(2)} para frete grátis!
+                  </p>
+                  <p className="text-orange-600 text-xs mt-1">
+                    Adicione mais itens e economize na entrega
+                  </p>
+                </div>
+              )}
+              
+              <div className="border-t pt-4">
+                <div className="flex justify-between text-xl lg:text-2xl font-bold">
+                  <span>Total</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500">
+                    R$ {total.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Link
+                to="/checkout"
+                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 lg:py-5 rounded-xl lg:rounded-2xl font-bold text-lg text-center block hover:shadow-lg transition-all"
+              >
+                Finalizar Pedido
+              </Link>
+              
+              <Link
+                to="/cardapio"
+                className="w-full border-2 border-gray-300 text-gray-700 py-3 lg:py-4 rounded-xl lg:rounded-2xl font-semibold text-center block hover:bg-gray-50 transition-all"
+              >
+                Adicionar Mais Itens
+              </Link>
+            </div>
+
+            <div className="mt-6 pt-6 border-t text-center">
+              <p className="text-gray-500 text-sm">
+                🕒 Tempo estimado de entrega: 30-45 min
+              </p>
+              <p className="text-gray-500 text-xs mt-1">
+                📍 Entregamos em toda São Paulo
+              </p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   )

@@ -1,11 +1,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
-import { lumi } from '../lib/lumi'
-import { hashCPF } from '../utils/cpfUtils'
 import toast from 'react-hot-toast'
 
 interface CartItem {
-  _id?: string
+  id: string
   itemId: string
   itemName: string
   quantity: number
@@ -19,11 +17,10 @@ interface CartItem {
 interface UseCartReturn {
   items: CartItem[]
   loading: boolean
-  addItem: (item: Omit<CartItem, '_id'>) => Promise<void>
-  updateQuantity: (itemId: string, quantity: number) => Promise<void>
-  removeItem: (itemId: string) => Promise<void>
-  clearCart: () => Promise<void>
-  syncCart: (cpf: string) => Promise<void>
+  addItem: (item: Omit<CartItem, 'id'>) => void
+  updateQuantity: (itemId: string, quantity: number) => void
+  removeItem: (itemId: string) => void
+  clearCart: () => void
   subtotal: number
   itemCount: number
 }
@@ -31,115 +28,94 @@ interface UseCartReturn {
 export const useCart = (): UseCartReturn => {
   const [items, setItems] = useState<CartItem[]>([])
   const [loading, setLoading] = useState(false)
-  const [currentCpfHash, setCurrentCpfHash] = useState<string | null>(null)
 
-  // Sincronizar carrinho com CPF
-  const syncCart = useCallback(async (cpf: string) => {
+  // Carregar carrinho do localStorage
+  useEffect(() => {
     try {
-      setLoading(true)
-      const cpfHash = await hashCPF(cpf)
-      setCurrentCpfHash(cpfHash)
-
-      const { list: cartItems } = await lumi.entities.cart_items.list({
-        filter: { cpfHash },
-        sort: { createdAt: -1 }
-      })
-
-      setItems(cartItems || [])
+      const savedCart = localStorage.getItem('foodcombo_cart')
+      if (savedCart) {
+        setItems(JSON.parse(savedCart))
+      }
     } catch (error) {
-      console.error('Erro ao sincronizar carrinho:', error)
-      toast.error('Erro ao carregar carrinho')
-    } finally {
-      setLoading(false)
+      console.error('Erro ao carregar carrinho:', error)
+    }
+  }, [])
+
+  // Salvar carrinho no localStorage
+  const saveCart = useCallback((cartItems: CartItem[]) => {
+    try {
+      localStorage.setItem('foodcombo_cart', JSON.stringify(cartItems))
+    } catch (error) {
+      console.error('Erro ao salvar carrinho:', error)
     }
   }, [])
 
   // Adicionar item ao carrinho
-  const addItem = useCallback(async (newItem: Omit<CartItem, '_id'>) => {
-    if (!currentCpfHash) {
-      toast.error('CPF necessário para adicionar itens')
-      return
-    }
-
-    try {
+  const addItem = useCallback((newItem: Omit<CartItem, 'id'>) => {
+    setItems(prev => {
       // Verificar se item já existe no carrinho
-      const existingItem = items.find(item => 
+      const existingItem = prev.find(item => 
         item.itemId === newItem.itemId && 
         item.selectedSize === newItem.selectedSize &&
         JSON.stringify(item.selectedExtras) === JSON.stringify(newItem.selectedExtras)
       )
 
+      let updatedItems: CartItem[]
+
       if (existingItem) {
         // Atualizar quantidade
-        await updateQuantity(existingItem._id!, existingItem.quantity + newItem.quantity)
+        updatedItems = prev.map(item => 
+          item.id === existingItem.id 
+            ? { ...item, quantity: item.quantity + newItem.quantity }
+            : item
+        )
+        toast.success('Quantidade atualizada no carrinho!')
       } else {
         // Criar novo item
-        const cartItem = await lumi.entities.cart_items.create({
-          cpfHash: currentCpfHash,
-          ...newItem,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          creator: 'customer'
-        })
-
-        setItems(prev => [...prev, cartItem])
+        const cartItem: CartItem = {
+          id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+          ...newItem
+        }
+        updatedItems = [...prev, cartItem]
         toast.success('Item adicionado ao carrinho!')
       }
-    } catch (error) {
-      console.error('Erro ao adicionar item:', error)
-      toast.error('Erro ao adicionar item ao carrinho')
-    }
-  }, [currentCpfHash, items])
+
+      saveCart(updatedItems)
+      return updatedItems
+    })
+  }, [saveCart])
 
   // Atualizar quantidade
-  const updateQuantity = useCallback(async (itemId: string, quantity: number) => {
+  const updateQuantity = useCallback((itemId: string, quantity: number) => {
     if (quantity <= 0) {
-      await removeItem(itemId)
+      removeItem(itemId)
       return
     }
 
-    try {
-      await lumi.entities.cart_items.update(itemId, {
-        quantity,
-        updatedAt: new Date().toISOString()
-      })
-
-      setItems(prev => prev.map(item => 
-        item._id === itemId ? { ...item, quantity } : item
-      ))
-    } catch (error) {
-      console.error('Erro ao atualizar quantidade:', error)
-      toast.error('Erro ao atualizar quantidade')
-    }
-  }, [])
+    setItems(prev => {
+      const updatedItems = prev.map(item => 
+        item.id === itemId ? { ...item, quantity } : item
+      )
+      saveCart(updatedItems)
+      return updatedItems
+    })
+  }, [saveCart])
 
   // Remover item
-  const removeItem = useCallback(async (itemId: string) => {
-    try {
-      await lumi.entities.cart_items.delete(itemId)
-      setItems(prev => prev.filter(item => item._id !== itemId))
+  const removeItem = useCallback((itemId: string) => {
+    setItems(prev => {
+      const updatedItems = prev.filter(item => item.id !== itemId)
+      saveCart(updatedItems)
       toast.success('Item removido do carrinho')
-    } catch (error) {
-      console.error('Erro ao remover item:', error)
-      toast.error('Erro ao remover item')
-    }
-  }, [])
+      return updatedItems
+    })
+  }, [saveCart])
 
   // Limpar carrinho
-  const clearCart = useCallback(async () => {
-    if (!currentCpfHash) return
-
-    try {
-      const itemIds = items.map(item => item._id!).filter(Boolean)
-      if (itemIds.length > 0) {
-        await lumi.entities.cart_items.deleteMany(itemIds)
-      }
-      setItems([])
-    } catch (error) {
-      console.error('Erro ao limpar carrinho:', error)
-      toast.error('Erro ao limpar carrinho')
-    }
-  }, [currentCpfHash, items])
+  const clearCart = useCallback(() => {
+    setItems([])
+    localStorage.removeItem('foodcombo_cart')
+  }, [])
 
   // Calcular subtotal
   const subtotal = items.reduce((total, item) => total + (item.price * item.quantity), 0)
@@ -154,7 +130,6 @@ export const useCart = (): UseCartReturn => {
     updateQuantity,
     removeItem,
     clearCart,
-    syncCart,
     subtotal,
     itemCount
   }

@@ -10,8 +10,8 @@ const PagamentoPix: React.FC = () => {
   const { total, orderNumber } = location.state || {}
 
   // 👇 Altere esses dados para os seus
-  const chavePix = 'seuemail@exemplo.com'
-  const nomeRecebedor = 'Restaurante Zoro'
+  const chavePix = 'zorotks@gmail.com'
+  const nomeRecebedor = 'Combos SP'
   const cidadeRecebedor = 'São Paulo'
 
   if (!total) {

@@ -7,9 +7,9 @@ import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
-import OrderConfirmation from './pages/OrderConfirmation'
-import PedidoConfirmado from './pages/PedidoConfirmado' // 🆕 import da nova página PIX
+import PagamentoPix from './pages/PagamentoPix'
 
+// -------------- CONTEXTO DO CARRINHO -----------------
 export interface CartItem {
   id: string
   name: string
@@ -98,6 +98,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   )
 }
 
+// ------------------ APP PRINCIPAL -------------------
 function App() {
   return (
     <CartProvider>
@@ -110,8 +111,8 @@ function App() {
               <Route path="/cardapio" element={<Menu />} />
               <Route path="/carrinho" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
-              <Route path="/pedido-confirmado" element={<OrderConfirmation />} />
-              <Route path="/pix" element={<PedidoConfirmado />} /> {/* 🆕 nova rota PIX */}
+              <Route path="/pedido-confirmado" element={<PagamentoPix />} /> {/* redireciona para PIX */}
+              <Route path="/pix" element={<PagamentoPix />} /> {/* rota direta PIX, opcional */}
             </Routes>
           </main>
           <Footer />

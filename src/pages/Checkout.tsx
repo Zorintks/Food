@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {ArrowLeft, MapPin, Phone, User, MessageSquare} from 'lucide-react'
+import { ArrowLeft, MapPin, User, MessageSquare } from 'lucide-react'
 import { useCart } from '../App'
 import toast from 'react-hot-toast'
 
@@ -83,10 +82,7 @@ const Checkout: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!validateForm()) {
-      return
-    }
-
+    if (!validateForm()) return
     if (items.length === 0) {
       toast.error('Seu carrinho está vazio!')
       navigate('/cardapio')
@@ -102,8 +98,8 @@ const Checkout: React.FC = () => {
       // Gerar número do pedido
       const orderNumber = Math.floor(Math.random() * 10000) + 1000
 
-      // Navegar para página de confirmação com dados do pedido
-      navigate('/pedido-confirmado', {
+      // Navegar para página PIX com dados do pedido
+      navigate('/pix', {
         state: {
           orderNumber,
           customerData,

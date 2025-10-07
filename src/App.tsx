@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
@@ -9,6 +8,7 @@ import Menu from './pages/Menu'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
+import PedidoConfirmado from './pages/PedidoConfirmado' // 🆕 import da nova página PIX
 
 export interface CartItem {
   id: string
@@ -111,6 +111,7 @@ function App() {
               <Route path="/carrinho" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/pedido-confirmado" element={<OrderConfirmation />} />
+              <Route path="/pix" element={<PedidoConfirmado />} /> {/* 🆕 nova rota PIX */}
             </Routes>
           </main>
           <Footer />

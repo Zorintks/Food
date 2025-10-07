@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import QRCode from 'react-qr-code'
 import { ArrowLeft, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { crc16ccitt } from '../utils/crc16'
+import { Pix } from 'pix-payload'
 
 const PagamentoPix: React.FC = () => {
   const navigate = useNavigate()
@@ -19,15 +19,14 @@ const PagamentoPix: React.FC = () => {
     return null
   }
 
-  const gerarPayloadPix = (chave: string, nome: string, cidade: string, valor: number) => {
-    const valorFormatado = valor.toFixed(2)
-    let payload = `00020126580014BR.GOV.BCB.PIX0136${chave}520400005303986540${valorFormatado}5802BR5913${nome}6009${cidade}62070503***`
-    const crc = crc16ccitt(payload).toString(16).toUpperCase().padStart(4, '0')
-    payload += crc
-    return payload
-  }
-
-  const payload = gerarPayloadPix(chavePix, nomeRecebedor, cidadeRecebedor, total)
+  // Cria o payload Pix usando a biblioteca pix-payload
+  const pix = new Pix({
+    chave: chavePix,
+    nome: nomeRecebedor,
+    cidade: cidadeRecebedor,
+    valor: total
+  })
+  const payload = pix.getPayload() // Payload Pix válido
 
   const copiarCodigoPix = async () => {
     await navigator.clipboard.writeText(payload)

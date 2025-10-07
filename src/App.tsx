@@ -9,7 +9,7 @@ import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import PagamentoPix from './pages/PagamentoPix'
 
-// -------------- CONTEXTO DO CARRINHO -----------------
+// ---------------- CONTEXTO DO CARRINHO ----------------
 export interface CartItem {
   id: string
   name: string
@@ -33,9 +33,7 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export const useCart = () => {
   const context = useContext(CartContext)
-  if (!context) {
-    throw new Error('useCart deve ser usado dentro de CartProvider')
-  }
+  if (!context) throw new Error('useCart deve ser usado dentro de CartProvider')
   return context
 }
 
@@ -60,45 +58,29 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     })
   }
 
-  const removeFromCart = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id))
-  }
+  const removeFromCart = (id: string) => setItems(prev => prev.filter(item => item.id !== id))
 
   const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
       removeFromCart(id)
       return
     }
-    setItems(prev =>
-      prev.map(item =>
-        item.id === id ? { ...item, quantity } : item
-      )
-    )
+    setItems(prev => prev.map(item => (item.id === id ? { ...item, quantity } : item)))
   }
 
-  const clearCart = () => {
-    setItems([])
-  }
+  const clearCart = () => setItems([])
 
-  const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
 
   return (
-    <CartContext.Provider value={{
-      items,
-      addToCart,
-      removeFromCart,
-      updateQuantity,
-      clearCart,
-      total,
-      itemCount
-    }}>
+    <CartContext.Provider value={{ items, addToCart, removeFromCart, updateQuantity, clearCart, total, itemCount }}>
       {children}
     </CartContext.Provider>
   )
 }
 
-// ------------------ APP PRINCIPAL -------------------
+// ---------------- APP PRINCIPAL ----------------
 function App() {
   return (
     <CartProvider>
@@ -111,8 +93,8 @@ function App() {
               <Route path="/cardapio" element={<Menu />} />
               <Route path="/carrinho" element={<Cart />} />
               <Route path="/checkout" element={<Checkout />} />
-              <Route path="/pedido-confirmado" element={<PagamentoPix />} /> {/* redireciona para PIX */}
-              <Route path="/pix" element={<PagamentoPix />} /> {/* rota direta PIX, opcional */}
+              <Route path="/pedido-confirmado" element={<PagamentoPix />} /> {/* Redireciona para PIX */}
+              <Route path="/pix" element={<PagamentoPix />} /> {/* Rota direta PIX */}
             </Routes>
           </main>
           <Footer />

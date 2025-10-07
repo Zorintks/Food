@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@lumi.new/sdk": "0.1.10",
-    "crc": "^4.3.2",
     "framer-motion": "^12.23.11",
     "lucide-react": "^0.540.0",
     "qrcode": "^1.5.3",

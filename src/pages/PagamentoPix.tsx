@@ -3,14 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import QRCode from 'react-qr-code'
 import { ArrowLeft, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
-import crc from 'crc'
+import { crc16ccitt } from '../utils/crc16'
 
 const PagamentoPix: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { total, orderNumber } = location.state || {}
 
-  // 👇 Alterar para seus dados
   const chavePix = 'zorotks@gmail.com'
   const nomeRecebedor = 'Combos SP'
   const cidadeRecebedor = 'Sao Paulo'
@@ -20,12 +19,11 @@ const PagamentoPix: React.FC = () => {
     return null
   }
 
-  // Gerar payload Pix correto com CRC16
   const gerarPayloadPix = (chave: string, nome: string, cidade: string, valor: number) => {
     const valorFormatado = valor.toFixed(2)
     let payload = `00020126580014BR.GOV.BCB.PIX0136${chave}520400005303986540${valorFormatado}5802BR5913${nome}6009${cidade}62070503***`
-    const crc16 = crc.crc16ccitt(payload).toString(16).toUpperCase().padStart(4, '0')
-    payload += crc16
+    const crc = crc16ccitt(payload).toString(16).toUpperCase().padStart(4, '0')
+    payload += crc
     return payload
   }
 

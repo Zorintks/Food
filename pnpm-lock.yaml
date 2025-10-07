@@ -17,6 +17,9 @@ importers:
       lucide-react:
         specifier: ^0.540.0
         version: 0.540.0(react@18.3.1)
+      pix-payload:
+        specifier: ^1.0.4
+        version: 1.0.4
       qrcode:
         specifier: ^1.5.3
         version: 1.5.4
@@ -1166,6 +1169,9 @@ packages:
   pirates@4.0.7:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
+
+  pix-payload@1.0.4:
+    resolution: {integrity: sha512-nXaX7EDIO51QgrfNiST0MXJ9rqKF7Y9PFZYsjV8gi+wYk8bEYVlHgUJnkFAqX4c8qVEOac22SPE9a4v1ezOtTQ==}
 
   pngjs@5.0.0:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
@@ -2471,6 +2477,8 @@ snapshots:
   pify@2.3.0: {}
 
   pirates@4.0.7: {}
+
+  pix-payload@1.0.4: {}
 
   pngjs@5.0.0: {}
 

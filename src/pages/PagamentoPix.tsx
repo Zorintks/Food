@@ -3,26 +3,30 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import QRCode from 'react-qr-code'
 import { ArrowLeft, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
+import crc from 'crc'
 
 const PagamentoPix: React.FC = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { total, orderNumber } = location.state || {}
 
-  // 👇 Altere esses dados para os seus
+  // 👇 Alterar para seus dados
   const chavePix = 'zorotks@gmail.com'
   const nomeRecebedor = 'Combos SP'
-  const cidadeRecebedor = 'São Paulo'
+  const cidadeRecebedor = 'Sao Paulo'
 
   if (!total) {
     navigate('/')
     return null
   }
 
-  // Gerar o payload do Pix Copia e Cola (formato BR Code)
+  // Gerar payload Pix correto com CRC16
   const gerarPayloadPix = (chave: string, nome: string, cidade: string, valor: number) => {
     const valorFormatado = valor.toFixed(2)
-    return `00020126580014BR.GOV.BCB.PIX0136${chave}520400005303986540${valorFormatado}5802BR5913${nome}6009${cidade}62070503***6304`
+    let payload = `00020126580014BR.GOV.BCB.PIX0136${chave}520400005303986540${valorFormatado}5802BR5913${nome}6009${cidade}62070503***`
+    const crc16 = crc.crc16ccitt(payload).toString(16).toUpperCase().padStart(4, '0')
+    payload += crc16
+    return payload
   }
 
   const payload = gerarPayloadPix(chavePix, nomeRecebedor, cidadeRecebedor, total)
@@ -34,7 +38,7 @@ const PagamentoPix: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-6">
-      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full text-center">
+      <div className="bg-white shadow-lg rounded-2xl p-8 max-w-md w-full text-center relative">
         <button
           onClick={() => navigate('/')}
           className="absolute left-6 top-6 p-2 hover:bg-gray-200 rounded-full transition"

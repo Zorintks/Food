@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -77,12 +76,6 @@ const Home: React.FC = () => {
                 >
                   Ver Cardápio <ArrowRight size={20} />
                 </Link>
-                <a
-                  href="https://wa.me/5511999999999"
-                  className="bg-green-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-green-400 transition-all transform hover:scale-105 flex items-center justify-center gap-2"
-                >
-                  Pedir via WhatsApp 📱
-                </a>
               </div>
             </motion.div>
             
@@ -264,12 +257,6 @@ const Home: React.FC = () => {
               >
                 Fazer Pedido Agora! 🚀
               </Link>
-              <a
-                href="https://wa.me/5511999999999"
-                className="bg-white/20 backdrop-blur text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/30 transition-all transform hover:scale-105"
-              >
-                Falar no WhatsApp 💬
-              </a>
             </div>
           </motion.div>
         </div>

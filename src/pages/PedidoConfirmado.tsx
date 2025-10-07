@@ -26,7 +26,7 @@ const PedidoConfirmado: React.FC = () => {
   const data = state as LocationState
 
   // 🔑 SUA CHAVE PIX AQUI:
-  const PIX_KEY = 'seuemail@pix.com'
+  const PIX_KEY = 'zorotks@gmail.com'
 
   if (!data) {
     navigate('/cardapio')

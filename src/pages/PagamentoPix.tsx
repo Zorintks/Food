@@ -23,7 +23,7 @@ const PagamentoPix: React.FC = () => {
   // Gerar payload Pix correto com CRC16
   const gerarPayloadPix = (chave: string, nome: string, cidade: string, valor: number) => {
     const valorFormatado = valor.toFixed(2)
-    let payload = `00020126580014BR.GOV.BCB.PIX0136zorotks@gmail.com520400005303986540${valorFormatado}5802BR5913${nome}6009${cidade}62070503***`
+    let payload = `00020126580014BR.GOV.BCB.PIX0136${chave}520400005303986540${valorFormatado}5802BR5913${nome}6009${cidade}62070503***`
     const crc16 = crc.crc16ccitt(payload).toString(16).toUpperCase().padStart(4, '0')
     payload += crc16
     return payload

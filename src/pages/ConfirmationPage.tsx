@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import {CheckCircle, Clock, Home, Phone, MapPin} from 'lucide-react'
+import { CheckCircle, Clock, Home, Phone, MapPin } from 'lucide-react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { OrderData } from '../types'
 
@@ -11,16 +11,16 @@ const ConfirmationPage: React.FC = () => {
   const [estimatedTime, setEstimatedTime] = useState(25)
 
   useEffect(() => {
-    // Retrieve order data from session storage
+    // Recuperar dados do pedido do sessionStorage
     const savedOrderData = sessionStorage.getItem('orderData')
     if (savedOrderData) {
       setOrderData(JSON.parse(savedOrderData))
     }
 
-    // Simulate countdown for estimated time
+    // Contador regressivo do tempo estimado
     const timer = setInterval(() => {
       setEstimatedTime(prev => Math.max(0, prev - 1))
-    }, 60000) // Decrease by 1 minute every minute
+    }, 60000) // 1 minuto
 
     return () => clearInterval(timer)
   }, [])
@@ -45,7 +45,7 @@ const ConfirmationPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Success Animation */}
+        {/* Animação de sucesso */}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -61,7 +61,7 @@ const ConfirmationPage: React.FC = () => {
           </p>
         </motion.div>
 
-        {/* Status Card */}
+        {/* Cartão de Status */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -101,7 +101,7 @@ const ConfirmationPage: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Order Details */}
+        {/* Detalhes do Pedido */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -110,7 +110,7 @@ const ConfirmationPage: React.FC = () => {
         >
           <h3 className="text-lg font-bold text-gray-900 mb-4">Detalhes do Pedido</h3>
           
-          {/* Items */}
+          {/* Itens */}
           <div className="space-y-3 mb-6">
             {orderData.items.map((item) => (
               <div key={item.id} className="flex items-center justify-between">
@@ -132,7 +132,7 @@ const ConfirmationPage: React.FC = () => {
             ))}
           </div>
 
-          {/* Totals */}
+          {/* Totais */}
           <div className="border-t pt-4 space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
@@ -160,7 +160,7 @@ const ConfirmationPage: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Customer Info */}
+        {/* Informações do Cliente */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -215,40 +215,19 @@ const ConfirmationPage: React.FC = () => {
           </div>
         </motion.div>
 
-        {/* Actions */}
+        {/* Botão Final */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="text-center space-y-4"
+          className="text-center"
         >
-          <p className="text-gray-600">
-            Alguma dúvida sobre seu pedido? Entre em contato conosco!
-          </p>
-          
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => navigate('/')}
-              className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
-            >
-              Fazer Novo Pedido
-            </button>
-            
-            <a
-              href="https://wa.me/5511999999999"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-colors inline-block"
-            >
-              Falar no WhatsApp
-            </a>
-          </div>
-
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-6">
-            <p className="text-yellow-800 text-sm">
-              💡 <strong>Dica:</strong> Salve nosso número (11) 99999-9999 para receber atualizações sobre seu pedido!
-            </p>
-          </div>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-orange-600 hover:bg-orange-700 text-white font-medium py-3 px-6 rounded-lg transition-colors"
+          >
+            Fazer Novo Pedido
+          </button>
         </motion.div>
       </div>
     </div>

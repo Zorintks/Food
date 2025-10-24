@@ -120,7 +120,7 @@ const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onCartClick, cartItems
               <button
                 onClick={() => {
                   if (cartItemsCount > 0) {
-                    navigate('/cart') // leva para a página de carrinho se tiver itens
+                    navigate('/CartPage') // leva para a página de carrinho se tiver itens
                   } else {
                     onCartClick() // abre menu lateral se estiver vazio
                   }

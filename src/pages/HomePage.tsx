@@ -1,13 +1,14 @@
-
 import React from 'react'
 import { motion } from 'framer-motion'
 import {ShoppingBag, Star, Users, Clock, Shield} from 'lucide-react'
 import ComboCard from '../components/ComboCard'
 import { ComboItem } from '../types'
+import { useNavigate } from 'react-router-dom'
 
 interface HomePageProps {
   onAddToCart: (item: Omit<ComboItem, 'quantity'>) => void
   onCartClick: () => void
+  cartItemsCount: number
 }
 
 const combos: ComboItem[] = [
@@ -82,7 +83,9 @@ const combos: ComboItem[] = [
   }
 ]
 
-const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onCartClick }) => {
+const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onCartClick, cartItemsCount }) => {
+  const navigate = useNavigate()
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -115,7 +118,13 @@ const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onCartClick }) => {
               className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
             >
               <button
-                onClick={onCartClick}
+                onClick={() => {
+                  if (cartItemsCount > 0) {
+                    navigate('/cart') // leva para a página de carrinho se tiver itens
+                  } else {
+                    onCartClick() // abre menu lateral se estiver vazio
+                  }
+                }}
                 className="bg-white text-orange-600 font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-colors flex items-center space-x-2 text-lg"
               >
                 <ShoppingBag className="w-6 h-6" />

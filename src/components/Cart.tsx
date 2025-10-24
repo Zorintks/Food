@@ -30,7 +30,7 @@ const Cart: React.FC<CartProps> = ({
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
   
   // Calcular descontos
-  const promoDiscount = appliedPromoCode ? (total * appliedPromoCode.discount / 100) : 0
+  const promoDiscount = appliedPromoCode ? (total * 15 / 100) : 0
   const subtotalAfterPromo = total - promoDiscount
   
   const deliveryFee = appliedPromoCode?.freeDelivery ? 0 : (subtotalAfterPromo >= 50 ? 0 : 8.99)
@@ -42,10 +42,10 @@ const Cart: React.FC<CartProps> = ({
     if (upperCode === 'PROMO3') {
       return {
         code: upperCode,
-        discount: 3,
+        discount: 15,
         freeDelivery: true,
         isValid: true,
-        description: '3% de desconto + frete grátis'
+        description: '15% de desconto + frete grátis'
       }
     }
     

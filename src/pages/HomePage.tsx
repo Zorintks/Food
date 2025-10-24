@@ -13,7 +13,7 @@ interface HomePageProps {
 const combos: ComboItem[] = [
   {
     id: '1',
-    name: 'Combo Clássico',
+    name: 'Combo Hambúrgueres',
     description: 'Hambúrguer artesanal, batata frita crocante e refrigerante gelado. O favorito de sempre!',
     originalPrice: 32.90,
     price: 24.90,
@@ -25,8 +25,8 @@ const combos: ComboItem[] = [
   },
   {
     id: '2',
-    name: 'Combo Bacon Supreme',
-    description: 'Hambúrguer duplo com bacon crocante, queijo cheddar, batata rústica e milkshake.',
+    name: 'Combo Fritas',
+    description: 'Fritas com bacon crocante, queijo cheddar, batata rústica e molho.',
     originalPrice: 45.90,
     price: 35.90,
     image: 'https://images.pexels.com/photos/70497/pexels-photo-70497.jpeg?auto=compress&cs=tinysrgb&w=500',
@@ -38,8 +38,8 @@ const combos: ComboItem[] = [
   },
   {
     id: '3',
-    name: 'Combo Vegetariano',
-    description: 'Hambúrguer de grão-de-bico, batata doce assada, suco natural e sobremesa vegana.',
+    name: 'Combo Pizza',
+    description: 'Combo inclui pizza grande sabor de sua escolha, 4 fatias de pão de alho e 2 refrigerantes de 350ml.',
     originalPrice: 28.90,
     price: 22.90,
     image: 'https://images.pexels.com/photos/1199957/pexels-photo-1199957.jpeg?auto=compress&cs=tinysrgb&w=500',
@@ -48,8 +48,8 @@ const combos: ComboItem[] = [
   },
   {
     id: '4',
-    name: 'Combo Frango Crocante',
-    description: 'Frango empanado especial, batata temperada, molho barbecue e refrigerante.',
+    name: 'Combo Salgados fritos',
+    description: 'Coxinha, kibe, risoles presentes em lanchonetes e padarias.',
     originalPrice: 29.90,
     price: 25.90,
     image: 'https://images.pexels.com/photos/2233348/pexels-photo-2233348.jpeg?auto=compress&cs=tinysrgb&w=500',
@@ -59,8 +59,8 @@ const combos: ComboItem[] = [
   },
   {
     id: '5',
-    name: 'Combo Família',
-    description: '2 hambúrguers, 2 porções de batata, 2 refrigerantes e sobremesa para compartilhar.',
+    name: 'Combo Refreesh',
+    description: 'Combo inclui 1 açaí 750ml, 1 smoothie de morango 550ml, 250g de frutas e adicional de leite Ninho.',
     originalPrice: 75.90,
     price: 59.90,
     image: 'https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg?auto=compress&cs=tinysrgb&w=500',
@@ -73,7 +73,7 @@ const combos: ComboItem[] = [
   {
     id: '6',
     name: 'Combo Light',
-    description: 'Hambúrguer grelhado, salada fresca, batata assada e água com gás saborizada.',
+    description: 'Pão integral, frango, salada, molhos rápidos',
     originalPrice: 26.90,
     price: 21.90,
     image: 'https://images.pexels.com/photos/1640772/pexels-photo-1640772.jpeg?auto=compress&cs=tinysrgb&w=500',

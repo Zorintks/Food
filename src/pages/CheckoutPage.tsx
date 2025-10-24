@@ -51,7 +51,7 @@ const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [errors, setErrors] = useState<FormErrors>({})
 
   // Calcular totais com promo code
-  const promoDiscount = appliedPromoCode ? (cartTotal * appliedPromoCode.discount / 100) : 0
+  const promoDiscount = appliedPromoCode ? (cartTotal * 15 / 100) : 0
   const subtotalAfterPromo = cartTotal - promoDiscount
   const deliveryFee = appliedPromoCode?.freeDelivery ? 0 : (formData.deliveryType === 'delivery' ? (subtotalAfterPromo >= 50 ? 0 : 8.99) : 0)
   const finalTotal = subtotalAfterPromo + deliveryFee

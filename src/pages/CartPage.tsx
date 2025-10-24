@@ -223,7 +223,7 @@ const CartPage: React.FC<CartPageProps> = ({
                           💡 Dica: Use o código PROMO3
                         </p>
                         <p className="text-xs text-purple-600">
-                          Ganhe 3% de desconto + frete grátis!
+                          Ganhe 15% de desconto + frete grátis!
                         </p>
                       </div>
                     </div>
@@ -240,7 +240,7 @@ const CartPage: React.FC<CartPageProps> = ({
                         <p className="font-medium text-green-800">
                           Código {appliedPromoCode.code} aplicado!
                         </p>
-                        <p className="text-sm text-green-600">{appliedPromoCode.description}</p>
+                        <p className="text-sm text-green-600">{15%}</p>
                       </div>
                     </div>
                     <button

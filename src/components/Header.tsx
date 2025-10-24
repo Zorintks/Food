@@ -1,4 +1,3 @@
-
 import React from 'react'
 import {ShoppingCart, Phone, Clock} from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -48,35 +47,18 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick }) => {
           {/* Cart Actions */}
           <div className="flex items-center space-x-3">
             {!isCartPage && !isCheckoutPage && (
-              <>
-                {/* Cart Sidebar Button */}
-                <button
-                  onClick={onCartClick}
-                  className="relative p-2 text-gray-600 hover:text-orange-600 transition-colors"
-                  aria-label="Abrir carrinho lateral"
-                >
-                  <ShoppingCart className="w-6 h-6" />
-                  {cartItemsCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {cartItemsCount}
-                    </span>
-                  )}
-                </button>
-
-                {/* Cart Page Button */}
-                <button
-                  onClick={() => navigate('/cart')}
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2"
-                >
-                  <ShoppingCart className="w-4 h-4" />
-                  <span className="hidden sm:inline">Ver Carrinho</span>
-                  {cartItemsCount > 0 && (
-                    <span className="bg-orange-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {cartItemsCount}
-                    </span>
-                  )}
-                </button>
-              </>
+              <button
+                onClick={() => navigate('/cart')}
+                className="relative p-2 text-gray-600 hover:text-orange-600 transition-colors"
+                aria-label="Ver carrinho"
+              >
+                <ShoppingCart className="w-6 h-6" />
+                {cartItemsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {cartItemsCount}
+                  </span>
+                )}
+              </button>
             )}
 
             {(isCartPage || isCheckoutPage) && (

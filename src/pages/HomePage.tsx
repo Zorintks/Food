@@ -111,37 +111,7 @@ const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onCartClick, cartItems
               Sabor autêntico, preços que cabem no bolso e a garantia de chegar quentinho na sua mesa!
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
-            >
-            <button
-              onClick={() => {
-                if (cartItemsCount > 0) {
-                  navigate('/CartPage') // leva para a página CartPage se houver itens
-                } else {
-                  onCartClick() // abre menu lateral se estiver vazio
-                }
-              }}
-              className="bg-white text-orange-600 font-bold py-4 px-8 rounded-xl hover:bg-gray-100 transition-colors flex items-center space-x-2 text-lg"
-            >
-              <ShoppingBag className="w-6 h-6" />
-              <span>Ver Carrinho</span>
-            </button>
-              
-              <div className="flex items-center space-x-6 text-sm">
-                <div className="flex items-center">
-                  <Clock className="w-5 h-5 mr-2" />
-                  <span>Entrega em 25min</span>
-                </div>
-                <div className="flex items-center">
-                  <Shield className="w-5 h-5 mr-2" />
-                  <span>Garantia total</span>
-                </div>
-              </div>
-            </motion.div>
+            
 
             {/* Social Proof */}
             <motion.div

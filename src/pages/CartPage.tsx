@@ -30,7 +30,7 @@ const CartPage: React.FC<CartPageProps> = ({
   const [isApplyingPromo, setIsApplyingPromo] = useState(false)
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-  const promoDiscount = appliedPromoCode ? (subtotal * appliedPromoCode.discount / 100) : 0
+  const promoDiscount = appliedPromoCode ? (subtotal * 15 / 100) : 0
   const subtotalAfterPromo = subtotal - promoDiscount
   const deliveryFee = appliedPromoCode?.freeDelivery ? 0 : (subtotalAfterPromo >= 50 ? 0 : 8.99)
   const total = subtotalAfterPromo + deliveryFee
@@ -50,7 +50,7 @@ const CartPage: React.FC<CartPageProps> = ({
       if (promoCode.toUpperCase() === 'PROMO3') {
         onApplyPromoCode(promoCode.toUpperCase())
         setPromoCode('')
-        toast.success('Código aplicado! 3% de desconto + frete grátis 🎉')
+        toast.success('Código aplicado! 15% de desconto + frete grátis 🎉')
       } else {
         toast.error('Código inválido. Tente PROMO3')
       }

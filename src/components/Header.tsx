@@ -1,6 +1,7 @@
 import React from 'react'
-import {ShoppingCart, Phone, Clock} from 'lucide-react'
+import { ShoppingCart, Phone, Clock } from 'lucide-react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import logoIcon from '../images/icon.png'
 
 interface HeaderProps {
   cartItemsCount: number
@@ -23,8 +24,8 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick }) => {
             onClick={() => navigate('/')}
             className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity"
           >
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl">
-              🍔
+            <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center bg-white shadow">
+              <img src={logoIcon} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Fast Combos</h1>

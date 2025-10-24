@@ -240,7 +240,7 @@ const CartPage: React.FC<CartPageProps> = ({
                         <p className="font-medium text-green-800">
                           Código {appliedPromoCode.code} aplicado!
                         </p>
-                        <p className="text-sm text-green-600">{15%}</p>
+                        <p className="text-sm text-green-600">15%</p>
                       </div>
                     </div>
                     <button

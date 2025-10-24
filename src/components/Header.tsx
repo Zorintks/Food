@@ -27,7 +27,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick }) => {
               🍔
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-900">FoodCombos</h1>
+              <h1 className="text-xl font-bold text-gray-900">Fast Combos</h1>
               <p className="text-xs text-gray-600">Sabor que conquista</p>
             </div>
           </div>
@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({ cartItemsCount, onCartClick }) => {
           <div className="hidden md:flex items-center space-x-6 text-sm text-gray-600">
             <div className="flex items-center space-x-2">
               <Phone className="w-4 h-4" />
-              <span>(11) 99999-9999</span>
+              <span>(11) 98345-5476</span>
             </div>
             <div className="flex items-center space-x-2">
               <Clock className="w-4 h-4" />

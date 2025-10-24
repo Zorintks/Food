@@ -1,14 +1,12 @@
 
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
-import {ShoppingBag, Star, Users, Clock, Shield, Filter} from 'lucide-react'
+import {ShoppingBag, Star, Users, Clock, Shield} from 'lucide-react'
 import ComboCard from '../components/ComboCard'
-import DrinkCard from '../components/DrinkCard'
-import { ComboItem, DrinkItem } from '../types'
+import { ComboItem } from '../types'
 
 interface HomePageProps {
   onAddToCart: (item: Omit<ComboItem, 'quantity'>) => void
-  onAddDrinkToCart: (item: Omit<DrinkItem, 'quantity'>) => void
   onCartClick: () => void
 }
 
@@ -84,145 +82,7 @@ const combos: ComboItem[] = [
   }
 ]
 
-const drinks: DrinkItem[] = [
-  // Refrigerantes
-  {
-    id: 'drink-1',
-    name: 'Coca-Cola Original',
-    description: 'O clássico refrigerante que todo mundo ama, gelado e refrescante.',
-    price: 4.90,
-    image: 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'refrigerante',
-    size: '350ml',
-    temperature: 'gelado',
-    rating: 4.9,
-    reviewCount: 1250,
-    badge: 'Favorito'
-  },
-  {
-    id: 'drink-2',
-    name: 'Guaraná Antarctica',
-    description: 'Sabor único e brasileiro, feito com extrato da fruta guaraná.',
-    price: 4.50,
-    image: 'https://images.pexels.com/photos/1292294/pexels-photo-1292294.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'refrigerante',
-    size: '350ml',
-    temperature: 'gelado',
-    rating: 4.7,
-    reviewCount: 890
-  },
-  {
-    id: 'drink-3',
-    name: 'Sprite Limão',
-    description: 'Refrescante sabor limão, perfeito para acompanhar qualquer refeição.',
-    price: 4.90,
-    image: 'https://images.pexels.com/photos/1292294/pexels-photo-1292294.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'refrigerante',
-    size: '350ml',
-    temperature: 'gelado',
-    rating: 4.6,
-    reviewCount: 720
-  },
-  
-  // Sucos
-  {
-    id: 'drink-4',
-    name: 'Suco de Laranja Natural',
-    description: 'Feito na hora com laranjas selecionadas, rico em vitamina C.',
-    price: 7.90,
-    image: 'https://images.pexels.com/photos/96974/pexels-photo-96974.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'suco',
-    size: '300ml',
-    temperature: 'natural',
-    rating: 4.8,
-    reviewCount: 456,
-    badge: 'Natural'
-  },
-  {
-    id: 'drink-5',
-    name: 'Suco Verde Detox',
-    description: 'Couve, maçã, limão e gengibre. Perfeito para quem busca saúde.',
-    price: 9.90,
-    image: 'https://images.pexels.com/photos/1337825/pexels-photo-1337825.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'suco',
-    size: '300ml',
-    temperature: 'gelado',
-    rating: 4.5,
-    reviewCount: 234,
-    badge: 'Detox'
-  },
-  {
-    id: 'drink-6',
-    name: 'Suco de Manga',
-    description: 'Cremoso e doce, feito com mangas maduras e gelado.',
-    price: 8.50,
-    image: 'https://images.pexels.com/photos/1337825/pexels-photo-1337825.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'suco',
-    size: '300ml',
-    temperature: 'gelado',
-    rating: 4.7,
-    reviewCount: 345
-  },
-  
-  // Cervejas
-  {
-    id: 'drink-7',
-    name: 'Heineken Long Neck',
-    description: 'Cerveja premium holandesa, sabor equilibrado e refrescante.',
-    price: 8.90,
-    image: 'https://images.pexels.com/photos/1552630/pexels-photo-1552630.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'cerveja',
-    size: '330ml',
-    temperature: 'gelado',
-    alcoholContent: 5.0,
-    rating: 4.6,
-    reviewCount: 678
-  },
-  {
-    id: 'drink-8',
-    name: 'Brahma Duplo Malte',
-    description: 'Cerveja brasileira encorpada, com sabor marcante e tradição.',
-    price: 6.90,
-    image: 'https://images.pexels.com/photos/1552630/pexels-photo-1552630.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'cerveja',
-    size: '350ml',
-    temperature: 'gelado',
-    alcoholContent: 4.8,
-    rating: 4.4,
-    reviewCount: 523,
-    badge: 'Nacional'
-  },
-  {
-    id: 'drink-9',
-    name: 'Stella Artois',
-    description: 'Cerveja belga premium, elegante e sofisticada.',
-    price: 9.90,
-    image: 'https://images.pexels.com/photos/1552630/pexels-photo-1552630.jpeg?auto=compress&cs=tinysrgb&w=500',
-    category: 'cerveja',
-    size: '330ml',
-    temperature: 'gelado',
-    alcoholContent: 5.2,
-    rating: 4.7,
-    reviewCount: 412,
-    isLimited: true,
-    limitedQuantity: 8
-  }
-]
-
-const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onAddDrinkToCart, onCartClick }) => {
-  const [selectedDrinkCategory, setSelectedDrinkCategory] = useState<'all' | 'refrigerante' | 'suco' | 'cerveja'>('all')
-
-  const filteredDrinks = selectedDrinkCategory === 'all' 
-    ? drinks 
-    : drinks.filter(drink => drink.category === selectedDrinkCategory)
-
-  const drinkCategories = [
-    { key: 'all', label: 'Todas', count: drinks.length },
-    { key: 'refrigerante', label: 'Refrigerantes', count: drinks.filter(d => d.category === 'refrigerante').length },
-    { key: 'suco', label: 'Sucos', count: drinks.filter(d => d.category === 'suco').length },
-    { key: 'cerveja', label: 'Cervejas', count: drinks.filter(d => d.category === 'cerveja').length }
-  ]
-
+const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onCartClick }) => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
@@ -322,61 +182,6 @@ const HomePage: React.FC<HomePageProps> = ({ onAddToCart, onAddDrinkToCart, onCa
                 transition={{ delay: index * 0.1 }}
               >
                 <ComboCard combo={combo} onAddToCart={onAddToCart} />
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Drinks Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Bebidas Geladas
-            </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Complete seu pedido com nossas bebidas selecionadas. 
-              Refrigerantes, sucos naturais e cervejas premium sempre gelados!
-            </p>
-          </motion.div>
-
-          {/* Drink Category Filter */}
-          <div className="flex flex-wrap justify-center gap-3 mb-8">
-            {drinkCategories.map((category) => (
-              <button
-                key={category.key}
-                onClick={() => setSelectedDrinkCategory(category.key as any)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors flex items-center space-x-2 ${
-                  selectedDrinkCategory === category.key
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <Filter className="w-4 h-4" />
-                <span>{category.label}</span>
-                <span className="bg-white/20 text-xs px-2 py-1 rounded-full">
-                  {category.count}
-                </span>
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredDrinks.map((drink, index) => (
-              <motion.div
-                key={drink.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <DrinkCard drink={drink} onAddToCart={onAddDrinkToCart} />
               </motion.div>
             ))}
           </div>

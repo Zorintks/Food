@@ -14,28 +14,7 @@ export interface ComboItem {
   hasCountdown?: boolean
 }
 
-export interface DrinkItem {
-  id: string
-  name: string
-  description: string
-  price: number
-  image: string
-  category: 'refrigerante' | 'suco' | 'cerveja'
-  size?: string
-  alcoholContent?: number
-  temperature: 'gelado' | 'natural'
-  rating: number
-  reviewCount: number
-  badge?: string
-  isLimited?: boolean
-  limitedQuantity?: number
-}
-
 export interface CartItem extends ComboItem {
-  quantity: number
-}
-
-export interface DrinkCartItem extends DrinkItem {
   quantity: number
 }
 
@@ -49,7 +28,6 @@ export interface PromoCode {
 
 export interface OrderData {
   items: CartItem[]
-  drinks: DrinkCartItem[]
   customer: {
     name: string
     phone: string

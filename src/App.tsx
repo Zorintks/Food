@@ -1,158 +1,172 @@
 
-import React, { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Header from './components/Header'
+import Cart from './components/Cart'
 import HomePage from './pages/HomePage'
 import CartPage from './pages/CartPage'
 import CheckoutPage from './pages/CheckoutPage'
 import ConfirmationPage from './pages/ConfirmationPage'
-import { CartItem, DrinkCartItem, ComboItem, DrinkItem, OrderData } from './types'
+import { CartItem, PromoCode } from './types'
 
 function App() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const [drinkItems, setDrinkItems] = useState<DrinkCartItem[]>([])
-  const [currentPage, setCurrentPage] = useState<'home' | 'cart' | 'checkout' | 'confirmation'>('home')
-  const [orderData, setOrderData] = useState<OrderData | null>(null)
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    const saved = localStorage.getItem('cartItems')
+    return saved ? JSON.parse(saved) : []
+  })
 
-  const addToCart = (item: Omit<ComboItem, 'quantity'>) => {
-    setCartItems(prev => {
-      const existingItem = prev.find(cartItem => cartItem.id === item.id)
+  const [isCartOpen, setIsCartOpen] = useState(false)
+  
+  const [appliedPromoCode, setAppliedPromoCode] = useState<PromoCode | null>(() => {
+    const saved = localStorage.getItem('appliedPromoCode')
+    return saved ? JSON.parse(saved) : null
+  })
+
+  // Save to localStorage whenever cart or promo code changes
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems))
+  }, [cartItems])
+
+  useEffect(() => {
+    if (appliedPromoCode) {
+      localStorage.setItem('appliedPromoCode', JSON.stringify(appliedPromoCode))
+    } else {
+      localStorage.removeItem('appliedPromoCode')
+    }
+  }, [appliedPromoCode])
+
+  const addToCart = (item: Omit<CartItem, 'quantity'>) => {
+    setCartItems(prevItems => {
+      const existingItem = prevItems.find(cartItem => cartItem.id === item.id)
+      
       if (existingItem) {
-        return prev.map(cartItem =>
+        return prevItems.map(cartItem =>
           cartItem.id === item.id
             ? { ...cartItem, quantity: cartItem.quantity + 1 }
             : cartItem
         )
+      } else {
+        return [...prevItems, { ...item, quantity: 1 }]
       }
-      return [...prev, { ...item, quantity: 1 }]
     })
   }
 
-  const addDrinkToCart = (item: Omit<DrinkItem, 'quantity'>) => {
-    setDrinkItems(prev => {
-      const existingItem = prev.find(drinkItem => drinkItem.id === item.id)
-      if (existingItem) {
-        return prev.map(drinkItem =>
-          drinkItem.id === item.id
-            ? { ...drinkItem, quantity: drinkItem.quantity + 1 }
-            : drinkItem
-        )
-      }
-      return [...prev, { ...item, quantity: 1 }]
-    })
-  }
-
-  const updateCartItemQuantity = (id: string, quantity: number) => {
+  const updateQuantity = (id: string, quantity: number) => {
     if (quantity <= 0) {
-      setCartItems(prev => prev.filter(item => item.id !== id))
-    } else {
-      setCartItems(prev =>
-        prev.map(item =>
-          item.id === id ? { ...item, quantity } : item
-        )
-      )
+      removeFromCart(id)
+      return
     }
-  }
 
-  const updateDrinkItemQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      setDrinkItems(prev => prev.filter(item => item.id !== id))
-    } else {
-      setDrinkItems(prev =>
-        prev.map(item =>
-          item.id === id ? { ...item, quantity } : item
-        )
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.id === id ? { ...item, quantity } : item
       )
-    }
+    )
   }
 
   const removeFromCart = (id: string) => {
-    setCartItems(prev => prev.filter(item => item.id !== id))
-  }
-
-  const removeDrinkFromCart = (id: string) => {
-    setDrinkItems(prev => prev.filter(item => item.id !== id))
+    setCartItems(prevItems => prevItems.filter(item => item.id !== id))
   }
 
   const clearCart = () => {
     setCartItems([])
-    setDrinkItems([])
+    setAppliedPromoCode(null)
   }
 
-  const getTotalItems = () => {
-    const comboTotal = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-    const drinkTotal = drinkItems.reduce((sum, item) => sum + item.quantity, 0)
-    return comboTotal + drinkTotal
+  const applyPromoCode = (code: string) => {
+    // Validate promo code
+    if (code === 'PROMO3') {
+      const promoCode: PromoCode = {
+        code: 'PROMO3',
+        discount: 3,
+        freeDelivery: true,
+        isValid: true,
+        description: '3% de desconto + frete grátis'
+      }
+      setAppliedPromoCode(promoCode)
+    }
   }
 
-  const getCartTotal = () => {
-    const comboTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-    const drinkTotal = drinkItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
-    return comboTotal + drinkTotal
+  const removePromoCode = () => {
+    setAppliedPromoCode(null)
   }
 
-  const handleCheckout = (data: OrderData) => {
-    setOrderData(data)
-    setCurrentPage('confirmation')
-    clearCart()
-  }
-
-  const navigateToCart = () => setCurrentPage('cart')
-  const navigateToHome = () => setCurrentPage('home')
-  const navigateToCheckout = () => setCurrentPage('checkout')
+  const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Toaster position="top-right" />
-      
-      <Header 
-        cartItemsCount={getTotalItems()}
-        onCartClick={navigateToCart}
-        onLogoClick={navigateToHome}
-      />
+    <Router>
+      <div className="min-h-screen bg-gray-50">
+        <Header 
+          cartItemsCount={cartItems.reduce((sum, item) => sum + item.quantity, 0)}
+          onCartClick={() => setIsCartOpen(true)}
+        />
+        
+        <Cart
+          isOpen={isCartOpen}
+          onClose={() => setIsCartOpen(false)}
+          items={cartItems}
+          appliedPromoCode={appliedPromoCode}
+          onUpdateQuantity={updateQuantity}
+          onRemoveItem={removeFromCart}
+          onApplyPromoCode={applyPromoCode}
+          onRemovePromoCode={removePromoCode}
+          onClearCart={clearCart}
+        />
 
-      <main>
-        {currentPage === 'home' && (
-          <HomePage 
-            onAddToCart={addToCart}
-            onAddDrinkToCart={addDrinkToCart}
-            onCartClick={navigateToCart}
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <HomePage 
+                onAddToCart={addToCart}
+                onCartClick={() => setIsCartOpen(true)}
+              />
+            } 
           />
-        )}
-        
-        {currentPage === 'cart' && (
-          <CartPage
-            cartItems={cartItems}
-            drinkItems={drinkItems}
-            onUpdateQuantity={updateCartItemQuantity}
-            onUpdateDrinkQuantity={updateDrinkItemQuantity}
-            onRemoveItem={removeFromCart}
-            onRemoveDrink={removeDrinkFromCart}
-            onClearCart={clearCart}
-            onCheckout={navigateToCheckout}
-            onContinueShopping={navigateToHome}
+          <Route 
+            path="/cart" 
+            element={
+              <CartPage
+                cartItems={cartItems}
+                appliedPromoCode={appliedPromoCode}
+                onUpdateQuantity={updateQuantity}
+                onRemoveItem={removeFromCart}
+                onApplyPromoCode={applyPromoCode}
+                onRemovePromoCode={removePromoCode}
+                onClearCart={clearCart}
+              />
+            } 
           />
-        )}
-        
-        {currentPage === 'checkout' && (
-          <CheckoutPage
-            cartItems={cartItems}
-            drinkItems={drinkItems}
-            total={getCartTotal()}
-            onOrderComplete={handleCheckout}
-            onBackToCart={() => setCurrentPage('cart')}
+          <Route 
+            path="/checkout" 
+            element={
+              <CheckoutPage 
+                cartItems={cartItems}
+                cartTotal={cartTotal}
+                appliedPromoCode={appliedPromoCode}
+                onClearCart={clearCart}
+              />
+            } 
           />
-        )}
-        
-        {currentPage === 'confirmation' && orderData && (
-          <ConfirmationPage
-            orderData={orderData}
-            onBackToHome={navigateToHome}
+          <Route 
+            path="/confirmation/:orderId" 
+            element={<ConfirmationPage />} 
           />
-        )}
-      </main>
-    </div>
+        </Routes>
+
+        <Toaster 
+          position="top-center"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#363636',
+              color: '#fff',
+            },
+          }}
+        />
+      </div>
+    </Router>
   )
 }
 
